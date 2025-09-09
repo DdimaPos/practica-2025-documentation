@@ -62,11 +62,17 @@ after, you should add the password in the url string. ask me for the password.
 
 ## Schema Changes Migrations
 ***DO NOT USE THE WEB STUDIO FOR CREATING OR ALTERING TABLES!!!!***
-the schema is managed under `src/db/schema.ts`
+the schema is managed under `src/db/schema.ts`ON BRANCH `migrations`.
 how to make a change:
-1. edit the file
-2. run `drizzle-kit generate`. this adds new migrations under `supabase/`
-3. run `drizzle-kit migrate`. this applies migrations to the supabase instance.
+1. run `git switch migrations`
+2. run `git pull`
+3. make sure nobody else makes changes with you at the same time!!
+4. edit the schema
+5. run `drizzle-kit generate`. this adds new migrations under `supabase/`
+6. run `drizzle-kit migrate`. this applies migrations to the supabase instance.
+7. `git add src/db/schema.ts supabase/ && git commit -m "my butiful message && git push"`
+
+always  commit and push right after a schema change. this makes sure everyone has an up to date `supabase/ `folder.
 
 p.s.1 if something does not work try `supabase push`. regardless if this worked or not, do:
 	1. `rm -r supabase/`
