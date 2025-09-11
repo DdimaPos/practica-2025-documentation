@@ -15,6 +15,9 @@ Should be discussed if we will allow to attach files.
 }
 ```
 
+Response:
+(?)
+
 ---
 
 ## Post (POST request)
@@ -28,6 +31,8 @@ Should be discussed if we will allow to attach files.
   "files": (?)
 }
 ```
+Response:
+(?)
 
 ---
 
@@ -41,6 +46,8 @@ In both cases (edit and delte) we need author value to be sure that we delete ri
   "content": ""
 }
 ```
+Response:
+(?)
 
 ---
 
@@ -51,10 +58,13 @@ In both cases (edit and delte) we need author value to be sure that we delete ri
   "author": ""
 }
 ```
+Response:
+(?)
 
 ---
 
-## Post (parent)
+## Post \[parent] (GET request)
+Response:
 ```json
 {
   "id": 1,
@@ -70,8 +80,10 @@ In both cases (edit and delte) we need author value to be sure that we delete ri
 
 ---
 
-## Replies to post
+## Replies to post (GET request)
 First we will get just an finite amount of replies, it can be extended if user clicks the button.
+
+Response:
 ```json
 [
   {
@@ -89,7 +101,7 @@ First we will get just an finite amount of replies, it can be extended if user c
 
 ---
 
-## Upvote / Downvote
+## Upvote / Downvote  (UPDATE request)
 If upvote is false => it's downvote
 ```json
 {
@@ -97,6 +109,8 @@ If upvote is false => it's downvote
   "upvote": false
 }
 ```
+Response:
+(?)
 
 ---
 
@@ -111,9 +125,12 @@ If post is anonymous => replies are also anonymous => fields like author can be 
 }
 ```
 
+Response:
+(?)
+
 ---
 
-## User Registration
+## User Registration (POST request)
 Here I don't cover verification of email.
 ```json
 {
@@ -124,21 +141,25 @@ Here I don't cover verification of email.
   "photo": ""
 }
 ```
+Response:
+(?)
 
 ---
 
-## User Login
+## User Login  (POST request)
 ```json
 {
   "username": "",
   "password": ""
 }
 ```
-
+Response:
+(?)
 
 ---
 
-## Profile (main info)
+## Profile \[main info] (GET request) 
+Response:
 ```json
 {
   "id": 1,
@@ -153,7 +174,8 @@ Here I don't cover verification of email.
 ```
 ---
 
-## Profile (user's posts)
+## Profile \[user's posts] (GET request)
+Response:
 ```json
 [
   {
@@ -172,7 +194,8 @@ Here I don't cover verification of email.
 ---
 
 
-## Most Popular Channels
+## Most Popular Channels (GET request)
+Response:
 ```json
 [
   {
@@ -186,7 +209,8 @@ Here I don't cover verification of email.
 ---
 
 
-## Most Active Users
+## Most Active Users (GET request)
+Response:
 ```json
 [
   {
@@ -200,7 +224,9 @@ Here I don't cover verification of email.
 
 ---
 
-## Posts
+## Posts (GET request)
+
+Response:
 ```json
 [
   {
@@ -218,7 +244,8 @@ Here I don't cover verification of email.
 
 ---
 
-## Search 
+## Search  (POST request)
+Response is written above.
 ```json
 {
   "content": "",
@@ -228,8 +255,10 @@ Here I don't cover verification of email.
 
 ---
 
-## Leaderboard (Users Example)
+## Leaderboard \[Users Example] (GET request)
 Description can be implemented as a popupto show info for example about courses which teaches this professor.
+
+Response:
 ```json
 [
   {
