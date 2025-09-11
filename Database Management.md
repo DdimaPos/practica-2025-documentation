@@ -59,12 +59,13 @@ DATABASE_URL=postgresql://...
 
 go to the supabase dashboard -> the project -> press "connect" in the upper right corner -> head to "ORMs" section -> select "drizzle" and copy paste the url
 after, you should add the postgres password in the url string.
+you may also add the nextjs api keys. 
 
 ## Schema Changes Migrations
 ***DO NOT USE THE WEB STUDIO FOR CREATING OR ALTERING TABLES!!!!***
 the schema is managed under `src/db/schema.ts`
 example when making a change:
-1. run `git switch migrations`
+1. run `git switch <branch_name>`
 2. run `git pull`
 3. make sure nobody else makes changes with you at the same time!!
 4. edit the schema
@@ -80,3 +81,10 @@ p.s.1 if something does not work try `supabase push`. regardless if this worked 
 	2.  generate and migrate again
 
 p.s.2 if something still does not work, text me.
+
+## Database querying
+
+use the db connection found in `src/db/index.ts`.
+***NEVER USE supabase's createClient()!!! IT IS INSECURE***.
+only access db client side via drizzle.
+for auth stuff, use `createServerClient()` server side.
