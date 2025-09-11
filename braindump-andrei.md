@@ -1,6 +1,6 @@
 # Braindump
 
-## Architecture 
+## Architecture Ideas
 ### Component Diagrams
 
 ```puml

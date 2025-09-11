@@ -54,7 +54,7 @@ the schema is located in `src/db/schema.ts` and connection is defined at `src/db
 for the connection to work, add in the necessary env variable in `.env`
 ```sh
 # ...
-DATABASE_URL=postgresql://
+DATABASE_URL=postgresql://...
 ```
 
 go to the supabase dashboard -> the project -> press "connect" in the upper right corner -> head to "ORMs" section -> select "drizzle" and copy paste the url
