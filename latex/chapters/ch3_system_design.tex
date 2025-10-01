@@ -7,79 +7,163 @@
 The student forum application implements the following core functional capabilities:
 
 \subsubsection{User Management}
-\begin{itemize}
-    \item \textbf{FR-1}: User registration with email verification - The system shall allow new users to create accounts by providing email, username, and password credentials, followed by mandatory email verification before account activation.
-    \item \textbf{FR-2}: Secure user authentication - The system shall authenticate users through secure login mechanisms using Supabase authentication services with session-based state management.
-    \item \textbf{FR-3}: Profile management - Users shall be able to view and update their profile information including personal details and forum preferences.
-    \item \textbf{FR-4}: Session management - The system shall maintain user sessions securely with automatic timeout and proper session invalidation upon logout.
-\end{itemize}
+
+ \textbf{FR-1}: User registration with email verification - The system shall allow new users to create accounts by providing email, username, and password credentials, followed by mandatory email verification before account activation.
+     \textbf{FR-2}: Secure user authentication - The system shall authenticate users through secure login mechanisms using Supabase authentication services with session-based state management.
+     \textbf{FR-3}: Profile management - Users shall be able to view and update their profile information including personal details and forum preferences.
+     \textbf{FR-4}: Session management - The system shall maintain user sessions securely with automatic timeout and proper session invalidation upon logout.
 
 \subsubsection{Content Management}
-\begin{itemize}
-    \item \textbf{FR-5}: Multi-type post creation - Authenticated users shall be able to create, edit, and delete three types of forum posts: basic text posts, interactive polls with multiple options, and event posts with date/time and location information.
-    \item \textbf{FR-6}: Comment system - Users shall be able to add, edit, and delete comments on forum posts with proper threading and moderation capabilities.
-    \item \textbf{FR-7}: Content search - The system shall provide advanced search functionality to locate posts and comments based on keywords, filters, and content type with real-time suggestions.
-    \item \textbf{FR-8}: Channel management system - The system shall organize posts into channels with approval workflows, channel categories (general, academic, social, announcements), and speciality-specific channels for targeted discussions.
-    \item \textbf{FR-15}: Post interaction system - Users shall be able to upvote and downvote posts and comments to promote quality content and community-driven content curation.
-    \item \textbf{FR-16}: Student verification system - The system shall verify student status through university email verification and student card validation (pending approval process) to distinguish verified students from general users.
-\end{itemize}
+
+     \textbf{FR-5}: Multi-type post creation - Authenticated users shall be able to create, edit, and delete three types of forum posts: basic text posts, interactive polls with multiple options, and event posts with date/time and location information.
+     \textbf{FR-6}: Comment system - Users shall be able to add, edit, and delete comments on forum posts with proper threading and moderation capabilities.
+     \textbf{FR-7}: Content search - The system shall provide advanced search functionality to locate posts and comments based on keywords, filters, and content type with real-time suggestions.
+     \textbf{FR-8}: Channel management system - The system shall organize posts into channels with approval workflows, channel categories (general, academic, social, announcements), and speciality-specific channels for targeted discussions.
+     \textbf{FR-15}: Post interaction system - Users shall be able to upvote and downvote posts and comments to promote quality content and community-driven content curation.
+     \textbf{FR-16}: Student verification system - The system shall verify student status through university email verification and student card validation (pending approval process) to distinguish verified students from general users.
+
 
 \subsubsection{Academic Services}
-\begin{itemize}
-    \item \textbf{FR-17}: Course review system - Verified students shall be able to review courses per speciality with ratings and written feedback to help fellow students make informed academic decisions.
-    \item \textbf{FR-18}: Professor search and evaluation - The system shall provide a searchable database of professors with aggregated ratings, reviews, and course associations for academic planning.
-\end{itemize}
+
+     \textbf{FR-17}: Course review system - Verified students shall be able to review courses per speciality with ratings and written feedback to help fellow students make informed academic decisions.
+     \textbf{FR-18}: Professor search and evaluation - The system shall provide a searchable database of professors with aggregated ratings, reviews, and course associations for academic planning.
+
 
 \subsubsection{Future Features (Planned)}
-\begin{itemize}
-    \item \textbf{FR-19}: Location-based channels - The system shall support local channels that display posts based on geographic proximity to enhance campus-specific discussions (future implementation).
-    \item \textbf{FR-20}: Personal schedule integration - Users shall be able to import and manage personal calendars with course schedules and event integration (future implementation).
-\end{itemize}
+
+     \textbf{FR-19}: Location-based channels - The system shall support local channels that display posts based on geographic proximity to enhance campus-specific discussions (future implementation).
+     \textbf{FR-20}: Personal schedule integration - Users shall be able to import and manage personal calendars with course schedules and event integration (future implementation).
+
 
 \subsubsection{Security and Access Control}
-\begin{itemize}
-    \item \textbf{FR-9}: Role-based access control - The system shall implement three user roles: verified students (university email verification), unverified users (limited access), and admin users, with appropriate permissions for content management and administrative functions.
-    \item \textbf{FR-10}: Input validation and sanitization - All user inputs shall be validated server-side and sanitized to prevent injection attacks and ensure data integrity.
-    \item \textbf{FR-11}: Secure API endpoints - All API routes shall require proper authentication and authorization before processing requests.
-    \item \textbf{FR-12}: Professor and student rating system with leaderboards - Verified students shall be able to rate professors across multiple categories (teaching quality, communication, helpfulness) and rate fellow students in categories (academic help, collaboration, leadership, social), with anonymous review capabilities and leaderboard displays based on ratings.
-    \item \textbf{FR-13}: Content recommendation system - The system shall provide intelligent content recommendations to users based on their academic speciality, interaction history, and channel preferences to enhance content discovery and engagement.
-    \item \textbf{FR-14}: Audit logging - The system shall log user activities and security events for monitoring and compliance purposes.
-\end{itemize}
+     \textbf{FR-9}: Role-based access control - The system shall implement three user roles: verified students (university email verification), unverified users (limited access), and admin users, with appropriate permissions for content management and administrative functions.
+     \textbf{FR-10}: Input validation and sanitization - All user inputs shall be validated server-side and sanitized to prevent injection attacks and ensure data integrity.
+     \textbf{FR-11}: Secure API endpoints \cite{supabase} - All API routes shall require proper authentication and authorization before processing requests.
+     \textbf{FR-12}: Professor and student rating system with leaderboards - Verified students shall be able to rate professors across multiple categories (teaching quality, communication, helpfulness) and rate fellow students in categories (academic help, collaboration, leadership, social), with anonymous review capabilities and leaderboard displays based on ratings.
+     \textbf{FR-13}: Content recommendation system - The system shall provide intelligent content recommendations to users based on their academic speciality, interaction history, and channel preferences to enhance content discovery and engagement.
+     \textbf{FR-14}: Audit logging - The system shall log user activities and security events for monitoring and compliance purposes.
+
 
 \subsection{Non-Functional Requirements}
 
 The application addresses critical security and performance requirements essential for a secure educational platform:
 
 \subsubsection{Security Requirements}
+
+     \textbf{NFR-1}: Encryption standards - All data transmission shall be encrypted using TLS 1.3, and sensitive data at rest shall be encrypted using AES-256 encryption algorithms.
+     \textbf{NFR-2}: Password security - User passwords shall be hashed using bcrypt with a minimum of 12 salt rounds, and password policies shall enforce strong password requirements.
+     \textbf{NFR-3}: Cross-Site Scripting (XSS) prevention - The application shall implement Content Security Policy (CSP) headers and input sanitization to prevent XSS attacks.
+     \textbf{NFR-4}: Cross-Site Request Forgery (CSRF) protection - All state-changing operations shall be protected with anti-CSRF tokens and same-site cookie attributes.
+     \textbf{NFR-5}: SQL injection prevention - Database operations shall use parameterized queries through Drizzle ORM \cite{drizzle} to prevent SQL injection vulnerabilities.
+     \textbf{NFR-6}: Session security - Sessions shall implement secure cookie attributes (HttpOnly, Secure, SameSite) with automatic timeout after 24 hours of inactivity.
+
+     \subsubsection*{Authentication}
+
+Our project provides the user with an extensive range of possibilities for registering on the platform.  
+The available options are:
+
+\begin{enumerate}
+  \item Authentication with email and password
+  \item Additional MFA enrollment for two-factor authentication
+  \item Authentication using OAuth 2.0: \cite{google-oauth2} 
+    \begin{itemize}
+      \item Google account
+      \item GitHub account (since we are software engineering students)
+      \item Azure/Microsoft account
+    \end{itemize}
+\end{enumerate}
+
+Below we explain how each of these authentication methods works and which security measures
+are taken to mitigate possible attacks.
+
+\subsection*{General authentication principle}
+
+The general principle of authentication is that information about the user’s session is stored in cookies.  
+The payload of these cookies is encrypted on the server.  \cite{Sarkar2020OAuth}
+Cookies can contain the JWT access token and JWT refresh token in most cases, but additional cookies may also be set during the MFA process or OAuth authentication to keep track of the intermediate state of the user.  
+For example, the user is not considered fully authenticated until they provide the TOTP code from
+their Authenticator app.
+
+Cookies were chosen due to the following reasons:
 \begin{itemize}
-    \item \textbf{NFR-1}: Encryption standards - All data transmission shall be encrypted using TLS 1.3, and sensitive data at rest shall be encrypted using AES-256 encryption algorithms.
-    \item \textbf{NFR-2}: Password security - User passwords shall be hashed using bcrypt with a minimum of 12 salt rounds, and password policies shall enforce strong password requirements.
-    \item \textbf{NFR-3}: Cross-Site Scripting (XSS) prevention - The application shall implement Content Security Policy (CSP) headers and input sanitization to prevent XSS attacks.
-    \item \textbf{NFR-4}: Cross-Site Request Forgery (CSRF) protection - All state-changing operations shall be protected with anti-CSRF tokens and same-site cookie attributes.
-    \item \textbf{NFR-5}: SQL injection prevention - Database operations shall use parameterized queries through Drizzle ORM to prevent SQL injection vulnerabilities.
-    \item \textbf{NFR-6}: Session security - Sessions shall implement secure cookie attributes (HttpOnly, Secure, SameSite) with automatic timeout after 24 hours of inactivity.
+  \item Extensive range of settings - unlike local storage, cookies provide more control through properties such as HttpOnly, Secure, and SameSite.
+  \item Isolation from external scripts - by setting the HttpOnly property to true, we ensure that
+    cookies can only be read on the server side of the application, preventing tampering with JavaScript. However, it is important to note that cookies can still be exploited by CSRF attacks.
+  \item Automatic access on each request - cookies are sent with every request that matches their scope and policy. This makes it easy to verify whether the received cookies are still valid, and if not, to invalidate or update them.
 \end{itemize}
+
+\subsection*{Authentication with email and password}
+
+Here we describe how authentication with email works. When the user navigates to the
+\texttt{/register} path, they see a sign-up form where they must provide the following information:
+
+\begin{enumerate}
+  \item Nickname
+  \item Email
+  \item Password
+  \item Profile picture
+\end{enumerate}
+
+When the user clicks the \textit{Register} button and the input is valid, they receive two things: an email with a confirmation link and a code verification cookie stored in their browser.  
+This ensures that even if the confirmation link is leaked, it has no value without the cookie.
+
+The confirmation link includes a token hash. When the user follows the link, both the token hash and the code verification cookie are sent to the authentication service, where their validity is checked. Once validated, the JWT access and refresh tokens are returned to the user in the form of encrypted cookies.  
+At this point, the user is considered authenticated, and their identity can be confirmed on each request.
+
+\subsection*{Setting up Multi-Factor Authentication}
+
+\subsection*{MFA enrollment}
+As an additional layer of security, we provide the option to use MFA \cite{microsoft-mfa}. Each registered user
+can navigate to the \texttt{/settings/mfa-enroll} page to enroll in MFA authentication. They will see a call-to-action button; upon clicking it, a QR code and its equivalent setup key in plain text will be displayed.  
+The user can scan the QR code with an Authenticator app (e.g., Google Authenticator or Microsoft Authenticator). After adding it, they must enter the newly generated code from the application into the input field below the setup key. If the code is correct, the user is considered enrolled.
+
+\subsection*{MFA verification}
+
+When the user enters the correct email and password, they receive:
+
+\begin{itemize}
+  \item A challenge ID - used to identify the specific request to verify an MFA factor.
+  \item A factor ID - identifier of the factor the user set up previously.
+  \item A set of cookies with limited access.
+\end{itemize}
+
+From the code’s perspective, this means: “You entered the correct login and password, but you still need to prove your identity.”  
+The user will receive a new set of cookies as soon as they provide the correct OTP code in the input field.  
+
+We also take into consideration how much time the user spends on the MFA input screen. After 60 seconds, the MFA challenge itself expires. This means that even if the OTP is still valid, the user must restart the login process, since the issued challenge ID is no longer recognized by the service.
+
+\subsection*{MFA Management}
+
+The user can also manage their MFA factors. By navigating to \texttt{/settings/mfa-manage}, they will see their MFA factor ID.  
+If they choose to delete it, they can press the delete button, after which they will be signed out.  
+They can then log in again using only their email and password.
+
+\subsection*{Future work on MFA}
+
+Usually, managing sensitive information such as MFA factors requires reauthentication.  
+Currently, this is not implemented, but it is on the list of planned improvements.
+
 
 \subsubsection{Performance Requirements}
-\begin{itemize}
-    \item \textbf{NFR-7}: Response time - API endpoints shall respond within 500ms for 95\% of requests under normal load conditions.
-    \item \textbf{NFR-8}: Scalability - The system shall support concurrent access by up to 1000 authenticated users without performance degradation.
-    \item \textbf{NFR-9}: Database performance - Database queries shall be optimized with proper indexing to maintain sub-100ms response times for common operations.
-\end{itemize}
+
+     \textbf{NFR-7}: Response time - API endpoints shall respond within 500ms for 95\% of requests under normal load conditions.
+     \textbf{NFR-8}: Scalability - The system shall support concurrent access by up to 1000 authenticated users without performance degradation.
+     \textbf{NFR-9}: Database performance - Database queries shall be optimized with proper indexing to maintain sub-100ms response times for common operations.
+
 
 \subsubsection{Reliability and Availability}
-\begin{itemize}
-    \item \textbf{NFR-10}: System availability - The application shall maintain 99.5\% uptime during operational hours with automated failover capabilities.
-    \item \textbf{NFR-11}: Data backup - User data and forum content shall be automatically backed up daily with point-in-time recovery capabilities.
-    \item \textbf{NFR-12}: Error handling - The system shall implement comprehensive error handling that prevents sensitive information disclosure while providing meaningful feedback to users.
-\end{itemize}
+
+     \textbf{NFR-10}: System availability - The application shall maintain 99.5\% uptime during operational hours with automated failover capabilities.
+     \textbf{NFR-11}: Data backup - User data and forum content shall be automatically backed up daily with point-in-time recovery capabilities.
+     \textbf{NFR-12}: Error handling - The system shall implement comprehensive error handling that prevents sensitive information disclosure while providing meaningful feedback to users.
+
 
 \subsubsection{Compliance and Standards}
-\begin{itemize}
-    \item \textbf{NFR-13}: Security standards compliance - The application shall adhere to OWASP Top 10 security guidelines and implement security best practices throughout the development lifecycle.
-    \item \textbf{NFR-14}: Data privacy - User data handling shall comply with educational privacy standards and implement proper data retention policies.
-    \item \textbf{NFR-15}: Accessibility - The user interface shall meet WCAG 2.1 Level AA accessibility standards to ensure inclusive access for all users.
-\end{itemize}
+
+     \textbf{NFR-13}: Security standards compliance - The application shall adhere to OWASP Top 10 security guidelines and implement security best practices throughout the development lifecycle.
+     \textbf{NFR-14}: Data privacy - User data handling shall comply with educational privacy standards and implement proper data retention policies.
+     \textbf{NFR-15}: Accessibility - The user interface shall meet WCAG 2.1 Level AA accessibility standards to ensure inclusive access for all users.
+
 
 \section{System Architecture Overview}
 
@@ -96,7 +180,7 @@ The architecture shown in Figure \ref{fig:component-diagram} demonstrates the in
 
 \section{Application Feature Design}
 
-The Next.js application follows a feature-based architecture where functionality is organized into distinct, modular components that interact through well-defined interfaces. This approach promotes code reusability, maintainability, and separation of concerns.
+The Next.js \cite{nextjs} application follows a feature-based architecture where functionality is organized into distinct, modular components that interact through well-defined interfaces. This approach promotes code reusability, maintainability, and separation of concerns.
 
 \begin{figure}[H]
 \centering
