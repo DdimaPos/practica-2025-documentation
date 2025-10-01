@@ -1,0 +1,33 @@
+@startuml
+skin rose
+title Login Flow
+actor User
+participant "Next.js Client" as Client
+participant "Login Server Action" as Action
+participant "Supabase Client" as Supabase
+participant "Next.js Middleware" as Middleware
+
+User -> Client: Submit login form
+activate Client
+Client -> Action: login(email, password)
+activate Action
+Action -> Supabase: auth.signInWithPassword()
+activate Supabase
+Supabase --> Action: session tokens & user data
+deactivate Supabase
+Action -> Action: Set auth cookies
+Action --> Client: redirect('/')
+deactivate Action
+
+note over Client: Page navigation triggered
+Client -> Middleware: Request to protected route
+activate Middleware
+Middleware -> Supabase: auth.getUser()
+activate Supabase
+Supabase --> Middleware: user data
+deactivate Supabase
+Middleware --> Client: Allow access
+deactivate Middleware
+Client --> User: Display protected content
+deactivate Client
+@enduml
