@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Project docs/API Routes and Server actions.md",
+                "file": "Project docs/braindump-andrei.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "API Routes and Server actions"
+              "title": "braindump-andrei"
             }
           }
         ]
@@ -170,16 +170,24 @@
   },
   "active": "27154732841f3e8e",
   "lastOpenFiles": [
-    "Project docs/JSONneeded.md",
-    "Project docs/API Routes and Server actions.md",
+    "latex/_FAD58DE7366495DB4650CFEFAC2FCD61.config.minted",
+    "latex/_FAD58DE7366495DB4650CFEFAC2FCD61.data.minted",
+    "latex/main.synctex(busy)",
+    "latex/pdflatex137045.fls",
+    "latex/pdflatex137032.fls",
+    "latex/main.synctex.gz",
+    "latex/main.run.xml",
+    "latex/_minted/_FAD58DE7366495DB4650CFEFAC2FCD61.index.minted",
+    "latex/_minted/21749EC959986A34A9F1EDF30824CB9A.highlight.minted",
+    "latex/_minted/default.style.minted",
+    "latex/_minted/borland.style.minted",
     "Project docs/Database Management.md",
+    "Project docs/API Routes and Server actions.md",
+    "Project docs/JSONneeded.md",
     "Project docs/Setting up project locally.md",
     "Project docs/braindump-andrei.md",
     "Templates/Daily note template.md",
-    "Templates",
     "2025-09-07.md",
-    "Welcome.md",
-    "Project docs",
-    "Daily meeting notes"
+    "Welcome.md"
   ]
 }

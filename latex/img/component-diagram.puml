@@ -1,0 +1,44 @@
+@startuml
+skin rose
+frame "Component Diagram" {
+
+    () Auth
+	() postgREST
+	() DB as db
+	() Storage
+	
+	' note right of db: Direct UDP Connection
+
+    cloud "Vercel" as front {
+        [Next.js Web App] as next
+        [drizzle-orm] as drizzle
+        [supabase libs] as supajs
+    }
+    
+    next .u-> drizzle
+    next .u-> supajs
+
+	file schema.ts as schema
+	
+    cloud Supabase as supa {
+        database "Postgresql" as pg
+        [GoTrue] as auth
+        note right of auth: Auth Server
+        database "Storage Bucket" as bkt
+    }
+    supa -d--|> Auth
+	supa -d--|> postgREST
+	pg -d--|> db
+	supa -d--|> Storage
+}
+
+pg .-d-> schema
+drizzle .-u-> schema
+
+ supajs .-u--> postgREST
+ supajs .-u--> Auth
+ drizzle .-u--> db
+ supajs .-u--> Storage
+ auth  .-l--> pg
+
+@enduml

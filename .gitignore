@@ -2,6 +2,31 @@
 .trash
 .stfolder
 
+# Next.js project symlink
+practica-2025-students-forum/
+
+# Additional system and editor junk files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.thumbnail
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.tmp
+*.temp
+.cache/
+.npm/
+node_modules/
+*.lock
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # LaTeX temporary files
 latex/*.aux
 latex/*.bcf

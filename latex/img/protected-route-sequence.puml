@@ -1,0 +1,34 @@
+@startuml
+skin rose
+title Protected Route Access Flow
+actor User
+participant "Browser" as Browser
+participant "Next.js Middleware" as Middleware
+participant "Supabase Auth" as Auth
+
+User -> Browser: Navigate to protected route
+activate Browser
+Browser -> Middleware: Request page
+activate Middleware
+Middleware -> Middleware: createServerClient()
+Middleware -> Auth: auth.getUser()
+activate Auth
+
+alt User is authenticated
+    Auth --> Middleware: Valid user data
+    deactivate Auth
+    Middleware --> Browser: Allow request to proceed
+    deactivate Middleware
+    Browser --> User: Display protected page
+    deactivate Browser
+else User not authenticated
+    Auth --> Middleware: No user/invalid session
+    deactivate Auth
+    Middleware --> Browser: Redirect to /login
+    deactivate Middleware
+    Browser --> User: Login page displayed
+    deactivate Browser
+end
+
+note over Middleware: Middleware runs on every request\nmatching the config pattern
+@enduml

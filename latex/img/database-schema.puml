@@ -1,0 +1,212 @@
+@startuml database-schema
+!define ENTITY class
+
+' User and Authentication
+ENTITY users {
+  +id: serial (PK)
+  authId: uuid (FK → authUsers)
+  firstName: varchar(100)
+  lastName: varchar(100)
+  email: varchar(200) {unique}
+  userType: user_type_enum
+  profilePictureUrl: varchar(500)
+  bio: text
+  yearOfStudy: integer
+  isVerified: boolean
+}
+
+' Academic Structure
+ENTITY faculties {
+  +id: serial (PK)
+  name: varchar(200)
+  description: text
+  deanName: varchar(200)
+  establishedYear: integer
+  createdAt: timestamp
+}
+
+ENTITY specialities {
+  +id: serial (PK)
+  facultyId: integer (FK → faculties)
+  name: varchar(200)
+  description: text
+  durationYears: integer
+  degreeType: degree_type_enum
+  createdAt: timestamp
+}
+
+ENTITY userSpecialities {
+  +id: serial (PK)
+  userId: integer (FK → users)
+  specialityId: integer (FK → specialities)
+  enrollmentDate: date
+  graduationDate: date
+  isCurrent: boolean
+}
+
+ENTITY courses {
+  +id: serial (PK)
+  name: varchar(200)
+  code: varchar(20) {unique}
+  description: text
+  credits: integer
+  facultyId: integer (FK → faculties)
+  semester: integer
+  createdAt: timestamp
+}
+
+ENTITY courseProfessors {
+  +id: serial (PK)
+  courseId: integer (FK → courses)
+  professorId: integer (FK → users)
+  academicYear: varchar(10)
+  isPrimary: boolean
+}
+
+' Forum Content
+ENTITY channels {
+  +id: serial (PK)
+  name: varchar(100)
+  description: text
+  channelType: channel_type_enum
+  facultyId: integer (FK → faculties)
+  specialityId: integer (FK → specialities)
+  isApproved: boolean
+  createdBy: integer (FK → users)
+  createdAt: timestamp
+}
+
+ENTITY posts {
+  +id: serial (PK)
+  title: varchar(300)
+  content: text
+  postType: post_type_enum
+  authorId: integer (FK → users)
+  channelId: integer (FK → channels)
+  isAnonymous: boolean
+  locationLat: decimal(10,8)
+  locationLng: decimal(11,8)
+  eventDate: timestamp
+  eventLocation: varchar(300)
+  isActive: boolean
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+
+ENTITY comments {
+  +id: serial (PK)
+  postId: integer (FK → posts)
+  authorId: integer (FK → users)
+  parentCommentId: integer (FK → comments)
+  content: text
+  isAnonymous: boolean
+  createdAt: timestamp
+  updatedAt: timestamp
+}
+
+' Interactions
+ENTITY postReactions {
+  +id: serial (PK)
+  userId: integer (FK → users)
+  postId: integer (FK → posts)
+  reactionType: reaction_type_enum
+  createdAt: timestamp
+}
+
+ENTITY commentReactions {
+  +id: serial (PK)
+  userId: integer (FK → users)
+  commentId: integer (FK → comments)
+  reactionType: reaction_type_enum
+  createdAt: timestamp
+}
+
+' Poll System
+ENTITY pollOptions {
+  +id: serial (PK)
+  postId: integer (FK → posts)
+  optionText: varchar(500)
+  voteCount: integer
+  optionOrder: integer
+}
+
+ENTITY pollVotes {
+  +id: serial (PK)
+  userId: integer (FK → users)
+  pollOptionId: integer (FK → pollOptions)
+  votedAt: timestamp
+}
+
+' Reviews and Ratings
+ENTITY professorReviews {
+  +id: serial (PK)
+  reviewerId: integer (FK → users)
+  courseProfessorsId: integer (FK → courseProfessors)
+  overallRating: integer
+  teachingQuality: integer
+  communication: integer
+  helpfulness: integer
+  reviewText: text
+  isAnonymous: boolean
+  createdAt: timestamp
+}
+
+ENTITY studentRatings {
+  +id: serial (PK)
+  ratedStudentId: integer (FK → users)
+  raterId: integer (FK → users)
+  category: rating_category_enum
+  rating: integer
+  comment: text
+  isAnonymous: boolean
+  createdAt: timestamp
+}
+
+' Social Features
+ENTITY notifications {
+  +id: serial (PK)
+  userId: integer (FK → users)
+  title: varchar(200)
+  message: text
+  notificationType: notification_type_enum
+  relatedId: integer
+  isRead: boolean
+  createdAt: timestamp
+}
+
+ENTITY userFollowers {
+  +id: serial (PK)
+  followerId: integer (FK → users)
+  followingId: integer (FK → users)
+  createdAt: timestamp
+}
+
+' Relationships
+faculties ||--o{ specialities
+faculties ||--o{ courses
+faculties ||--o{ channels
+specialities ||--o{ userSpecialities
+specialities ||--o{ channels
+users ||--o{ userSpecialities
+users ||--o{ courseProfessors
+users ||--o{ channels
+users ||--o{ posts
+users ||--o{ comments
+users ||--o{ postReactions
+users ||--o{ commentReactions
+users ||--o{ pollVotes
+users ||--o{ professorReviews
+users ||--o{ studentRatings
+users ||--o{ notifications
+users ||--o{ userFollowers
+courses ||--o{ courseProfessors
+channels ||--o{ posts
+posts ||--o{ comments
+posts ||--o{ postReactions
+posts ||--o{ pollOptions
+comments ||--o{ commentReactions
+comments ||--o{ comments : "self-reference"
+pollOptions ||--o{ pollVotes
+courseProfessors ||--o{ professorReviews
+
+@enduml

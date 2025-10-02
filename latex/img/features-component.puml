@@ -1,0 +1,53 @@
+@startuml
+skin rose
+
+frame "Features Component Diagram" {
+
+    package "Next.js Application Features" {
+        
+        [Authentication] as auth
+        [MFA (Multi-Factor Auth)] as mfa
+        [Navigation] as nav
+        [PostsContainer] as posts
+        [PostList] as list
+        [PostContainer] as post
+        [CommentsContainer] as comments
+        [SearchBar] as search
+        [Search] as searchfeature
+        [Profile] as profile
+        [Settings] as settings
+        [Leaderboard] as leaderboard
+        [HPLeaderboard] as hpleaderboard
+    }
+    
+    ' Authentication flows
+    auth --> mfa : MFA enrollment/verification
+    auth --> nav : user state
+    nav --> auth : logout action
+    
+    ' Posts flow
+    auth --> posts : user state
+    posts --> list : post data
+    
+    ' Search integration
+    search --> searchfeature : search context
+    searchfeature --> list : filter results
+    
+    ' Post details
+    list --> post : navigate to post
+    post --> comments : display comments
+    
+    ' Comments system
+    comments --> comments : threaded replies
+    
+    ' Profile and settings
+    auth --> profile : user state
+    profile --> settings : user preferences
+    
+    ' Leaderboard system
+    auth --> leaderboard : user ratings
+    auth --> hpleaderboard : homepage leaderboard
+    leaderboard --> profile : user achievements
+}
+
+@enduml

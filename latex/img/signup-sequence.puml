@@ -1,0 +1,41 @@
+@startuml
+skin rose
+title Signup Flow
+actor User
+participant "Next.js Client" as Client
+participant "Signup Server Action" as Action
+participant "Drizzle DB" as DB
+participant "Supabase Auth" as Auth
+participant "Email Service" as Email
+
+User -> Client: Submit signup form
+activate Client
+Client -> Action: signup(formData)
+activate Action
+Action -> Action: Validate form data
+Action -> DB: Check if user exists
+activate DB
+DB --> Action: User existence result
+deactivate DB
+
+alt User doesn't exist
+    Action -> Auth: auth.signUp(email, password)
+    activate Auth
+    Auth --> Action: user created, confirmation email triggered
+    Auth -> Email: Send confirmation email
+    activate Email
+    deactivate Email
+    deactivate Auth
+    Action -> DB: Insert user profile data
+    activate DB
+    DB --> Action: User profile created
+    deactivate DB
+    Action --> Client: Success - check email
+    Client --> User: "Confirmation email sent!"
+else User already exists
+    Action --> Client: Error - user exists
+    Client --> User: "Email already registered"
+end
+deactivate Action
+deactivate Client
+@enduml

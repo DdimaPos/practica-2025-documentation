@@ -1,0 +1,28 @@
+@startuml
+skin rose
+title Email Confirmation Flow
+actor User
+participant "Email Client" as Email
+participant "Next.js App" as Client
+participant "Auth Callback API" as Callback
+participant "Supabase Auth" as Auth
+
+User -> Email: Click confirmation link
+activate Email
+Email -> Client: GET /api/auth/callback?code=...
+activate Client
+Client -> Callback: Handle callback request
+activate Callback
+Callback -> Auth: exchangeCodeForSession(code)
+activate Auth
+Auth --> Callback: Valid session tokens
+deactivate Auth
+Callback -> Callback: Set auth cookies
+Callback --> Client: Redirect to next=/
+deactivate Callback
+Client --> User: Display authenticated app
+deactivate Client
+deactivate Email
+
+note over User: User is now verified and logged in
+@enduml
