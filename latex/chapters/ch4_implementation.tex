@@ -1,2 +1,188 @@
-\chapter{SYSTEM IMPLEMENTATION}
+\addcontentsline{toc}{chapter}{SYSTEM IMPLEMENTATION}
+\chapter*{SYSTEM IMPLEMENTATION}
 
+\section{Security Implementation}
+
+The Student Forum platform implements multiple layers of security to protect user data and prevent various attack vectors. This section details the key security mechanisms implemented in the system.
+
+\subsection{Authentication (Supabase)}
+
+Authentication is the process of verifying the identity of a user or system. In the Student Forum application, we use Supabase Auth as the primary authentication provider with server-side session handling implemented via Supabase SSR helpers. This approach ensures that session tokens are handled securely on the server side, preventing client-side manipulation. Session cookies are hardened with \texttt{httpOnly: true} to prevent client-side JavaScript from accessing session cookies, mitigating XSS attacks, and \texttt{secure: true} in production to ensure cookies are only sent over HTTPS, preventing man-in-the-middle attacks. This is crucial for the application because it protects user accounts from unauthorized access and ensures that only legitimate users can access the forum.
+
+\textbf{Theoretical Background:} Authentication is the first line of defense in any security system. It verifies the identity of users before granting access to protected resources. The most common form of authentication is username/password combination, but modern applications often implement additional security measures such as multi-factor authentication. The principle behind authentication is to establish trust between the user and the system by validating credentials that only the legitimate user should possess.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/utils/supabase/middleware.ts
+export async function updateSession(request: NextRequest) {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { /* cookie options with httpOnly: true */ } }
+  );
+  await supabase.auth.getUser();
+  return NextResponse.next({ request });
+}
+\end{verbatim}
+
+\subsection{Authorization \& Route Protection}
+
+Authorization determines what authenticated users are allowed to do within the system. A global Next.js middleware enforces that most pages require a valid Supabase-authenticated user. Unauthenticated requests are redirected to \texttt{/login}, except for paths that start with \texttt{/login}, \texttt{/auth}, or \texttt{/error}. Additionally, application-level authorization ensures only verified users can access the system by checking if a user exists in the local \texttt{users} table and has \texttt{isVerified} set to true. This is essential for the forum application to maintain content integrity and ensure that only registered and verified users can participate in discussions.
+
+\textbf{Theoretical Background:} Authorization is the process of determining what an authenticated user is allowed to do. While authentication verifies who the user is, authorization defines what they can access. The principle of least privilege is fundamental to authorization: users should only have access to the minimum resources necessary to perform their functions. This reduces the potential damage if an account is compromised. Role-Based Access Control (RBAC) and Attribute-Based Access Control (ABAC) are common authorization models.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// middleware.ts
+export async function middleware(request: NextRequest) {
+  return await updateSession(request);
+}
+
+export const config = {
+  matcher: ['/((?!api|_next/static|favicon.ico|auth|login).*)'],
+};
+\end{verbatim}
+
+\subsection{Multi-Factor Authentication (MFA)}
+
+Multi-Factor Authentication (MFA) is a security system that requires more than one method of authentication from independent categories of credentials to verify the user's identity for a login or other transaction. The system includes MFA capabilities with enrollment, verification, and factor management features. During sensitive operations like password updates, the system checks the Supabase Authenticator Assurance Level (AAL) and may require MFA verification. If the required AAL is not met, users are redirected to an MFA challenge step to enhance security for sensitive operations. MFA is vital for the forum application as it adds an extra layer of security beyond passwords, protecting user accounts even if passwords are compromised.
+
+\textbf{Theoretical Background:} MFA is based on the principle of defense in depth, requiring multiple forms of verification from different categories: something you know (password), something you have (phone, token), and something you are (biometrics). Even if one factor is compromised, the attacker still cannot gain access without the other factors. This dramatically increases security and is especially important for sensitive operations like password changes or account modifications.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/app/api/auth/update-password/route.ts
+const currentAAL = sessionData?.session?.user?.aal;
+if (currentAAL?.level !== 'aal2') {
+  return NextResponse.json({
+    redirect: '/auth/mfa-challenge',
+    message: 'MFA verification required for password change'
+  }, { status: 403 });
+}
+\end{verbatim}
+
+\subsection{Security Headers \& CSP}
+
+Security headers are HTTP response headers that help protect web applications from various attacks. The Content Security Policy (CSP) is a security standard that helps prevent cross-site scripting (XSS), clickjacking and other code injection attacks. Security headers are set globally via Next.js \texttt{headers()} in \texttt{next.config.ts}. The CSP includes directives such as \texttt{default-src 'self'}, \texttt{frame-ancestors 'none'} for clickjacking protection, and \texttt{upgrade-insecure-requests}. The policy also specifies allowed sources for various content types while restricting potentially dangerous script sources. Additional headers include \texttt{X-Frame-Options: DENY}, \texttt{X-Content-Type-Options: nosniff}, and \texttt{Strict-Transport-Security} for enhanced security. These headers are critical for the forum application to defend against common web vulnerabilities and protect users from malicious content.
+
+\textbf{Theoretical Background:} Security headers are a defense mechanism that browsers enforce to protect against various client-side attacks. CSP specifically addresses XSS vulnerabilities by defining which sources of content are trusted. X-Frame-Options prevents clickjacking by controlling whether a page can be embedded in a frame. HSTS ensures all communications happen over HTTPS. These headers provide an additional layer of security that works even if other defenses fail.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// next.config.ts
+const nextConfig = {
+  async headers() {
+    return [{
+      source: '/(.*)',
+      headers: [{
+        key: 'Content-Security-Policy',
+        value: "default-src 'self'; frame-ancestors 'none';"
+      }]
+    }];
+  }
+};
+\end{verbatim}
+
+\subsection{CSP Violation Reporting}
+
+Content Security Policy (CSP) violation reporting allows developers to monitor and analyze potential security issues. The system accepts CSP violation reports through an API endpoint at \texttt{/api/csp-report}. This endpoint is rate-limited to prevent abuse and logs violations server-side for security monitoring purposes. The endpoint responds with permissive CORS headers to accommodate browser reporting behavior and returns appropriate status codes. This mechanism is important for the forum application as it helps identify potential security bypasses and allows for continuous improvement of the security policies.
+
+\textbf{Theoretical Background:} CSP violation reporting is part of a security monitoring strategy that allows developers to detect when an attack is attempted or when legitimate content is incorrectly blocked by CSP rules. This provides valuable feedback for tuning security policies and identifying potential security issues before they become serious problems. It's an important component of a defense-in-depth strategy.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/app/api/csp-report/route.ts
+export async function POST(request: Request) {
+  const report = await request.json();
+  console.error('CSP Violation Report:', JSON.stringify(report));
+  return new Response(null, { status: 204 });
+}
+\end{verbatim}
+
+\subsection{Rate Limiting \& Abuse Prevention}
+
+Rate limiting is a technique used to control the amount of traffic a user or system can consume over a specific period. It prevents abuse, brute force attacks, and resource exhaustion. Rate limiting is implemented using \texttt{@upstash/ratelimit} + Upstash Redis to prevent abuse and brute force attacks. Different endpoints have different rate limits: login attempts are limited to 6 per minute, registration to 4 per minute, post creation to 2 per minute, and comments to 10 per minute. In development and test environments, a no-op rate limiter is used that always allows requests. Rate limiting is essential for the forum application to prevent spam, denial-of-service attacks, and ensure fair resource usage among users.
+
+\textbf{Theoretical Background:} Rate limiting is a crucial defense against automated attacks and resource exhaustion. It helps prevent brute force attacks on authentication endpoints, limits the impact of bots on the system, and ensures fair usage of resources among legitimate users. Rate limiting algorithms like token bucket, leaky bucket, and sliding window counter help control the rate of requests to protect system resources.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/app/api/comments/route.ts
+const { success } = await rateLimit.comment.limit(ip);
+if (!success) {
+  return NextResponse.json(
+    { error: 'Too many requests' },
+    { status: 429 }
+  );
+}
+\end{verbatim}
+
+\subsection{Input Validation \& Sanitization}
+
+Input validation and sanitization are security techniques used to ensure that only properly formatted data enters a software system. Input sanitization utilities use DOMPurify to prevent XSS attacks by stripping all HTML tags and attributes, keeping only text content. The system includes validation functions for UUID formats and search queries. Search queries are specially sanitized by trimming, escaping SQL LIKE wildcards (\%, \_), and removing dangerous characters. These sanitization utilities are applied to user inputs during registration and content creation. This is crucial for the forum application to prevent malicious code injection and maintain data integrity.
+
+\textbf{Theoretical Background:} Input validation and sanitization are fundamental security practices that prevent injection attacks such as XSS, SQL injection, and command injection. The principle is to never trust user input and always validate and sanitize it before processing. Validation ensures data conforms to expected formats, while sanitization removes potentially dangerous content. Both are essential for preventing code injection attacks that could compromise the system.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/lib/security/sanitize.ts
+export function sanitize(input: string): string {
+  return DOMPurify.sanitize(input, {
+    ALLOWED_TAGS: [],  // Strip all tags
+    ALLOWED_ATTR: []   // Strip all attributes
+  });
+}
+\end{verbatim}
+
+\subsection{API Error Handling \& Safe Responses}
+
+Secure error handling prevents information disclosure that could be exploited by attackers. API error handling is implemented to prevent information leakage and maintain security. The system returns structured JSON errors with appropriate HTTP status codes (e.g. \texttt{400}, \texttt{401}, \texttt{404}, \texttt{429}, \texttt{500}) rather than exposing stack traces to clients. Endpoints validate input early and return appropriate error codes without revealing internal system details. For example, the comments endpoint validates payloads and IDs, returning \texttt{400} for invalid input, while the user endpoint returns \texttt{401} for authentication issues. This approach prevents attackers from gaining insight into system internals through error messages. Proper error handling is vital for the forum application to avoid exposing sensitive system information that could be used for further attacks.
+
+\textbf{Theoretical Background:} Secure error handling is critical to prevent information disclosure attacks. Detailed error messages can reveal internal system information, database schemas, file paths, and other sensitive data that attackers can use to exploit the system. The principle is to provide enough information for legitimate users to understand what went wrong while revealing nothing about the internal workings of the system to potential attackers.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/app/api/comments/route.ts
+if (!postId || typeof postId !== 'string' || !isValidUuid(postId)) {
+  return NextResponse.json(
+    { error: 'Invalid post ID' },
+    { status: 400 }
+  );
+}
+// Return minimal response to prevent information leakage
+return NextResponse.json({ success: true }, { status: 201 });
+\end{verbatim}
+
+\subsection{Secrets \& Environment Configuration}
+
+Secure management of sensitive configuration data is critical for application security. The system uses environment variables for configuration, particularly for Supabase credentials. The Supabase configuration is provided via \texttt{NEXT\_PUBLIC\_SUPABASE\_URL} and \texttt{NEXT\_PUBLIC\_SUPABASE\_PUBLISHABLE\_KEY} environment variables. These are accessed through the Supabase SSR middleware and are never exposed directly in client-side code. Upstash Redis is loaded via \texttt{Redis.fromEnv()} in production-like environments, ensuring that sensitive credentials are properly managed through environment configuration rather than hardcoded values. This approach is essential for the forum application to prevent credential exposure in source code and maintain security across different deployment environments.
+
+\textbf{Theoretical Background:} Secret management is a critical aspect of application security. Hardcoding credentials in source code is a common security mistake that can lead to credential exposure. Best practices include using environment variables, secret management services, or encrypted configuration stores. The principle is to separate secrets from code and ensure they are not stored in version control systems where they could be accidentally exposed.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/utils/supabase/middleware.ts
+const supabase = createServerClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+  { cookies: { ... } }
+);
+\end{verbatim}
+
+\subsection{Open Redirect Protection}
+
+Open redirect vulnerabilities occur when an application permits redirection to an arbitrary external domain. The OAuth callback handler validates the \texttt{next} query parameter to prevent open redirect attacks. It ensures that the redirect URL is a relative path starting with '/' before performing the redirect. If an absolute URL is detected, the system resets to the homepage to prevent unauthorized redirects to external sites. This protection is important for the forum application to prevent attackers from using the application as a phishing vector.
+
+\textbf{Theoretical Background:} Open redirect vulnerabilities can be exploited for phishing attacks. Attackers craft URLs that appear to come from a trusted site but redirect users to malicious sites. The solution is to validate redirect URLs and only allow redirects to trusted domains or relative paths. This prevents the application from being used as part of a phishing scheme.
+
+\textbf{Example Implementation:}
+\begin{verbatim}
+// src/app/api/auth/callback/route.ts
+if (next && !next.startsWith('/')) {
+  console.warn(`Invalid redirect URL: ${next}`);
+  return NextResponse.redirect(`${requestUrl.origin}/`);
+}
+return NextResponse.redirect(`${requestUrl.origin}${next}`);
+\end{verbatim}
+
+These security implementations ensure that the Student Forum platform maintains a robust security posture, protecting both user data and system integrity from various attack vectors. The layered approach to security, combining authentication, authorization, input validation, rate limiting, and secure configuration, provides comprehensive protection against common web application threats and ensures a safe environment for academic discussions and feedback.

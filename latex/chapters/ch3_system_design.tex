@@ -59,13 +59,13 @@ The application addresses critical security and performance requirements essenti
 
      \subsubsection*{Authentication}
 
-Our project provides the user with an extensive range of possibilities for registering on the platform.  
+Our project provides the user with an extensive range of possibilities for registering on the platform.
 The available options are:
 
 \begin{enumerate}
   \item Authentication with email and password
   \item Additional MFA enrollment for two-factor authentication
-  \item Authentication using OAuth 2.0: \cite{google-oauth2} 
+  \item Authentication using OAuth 2.0: \cite{google-oauth2}
     \begin{itemize}
       \item Google account
       \item GitHub account (since we are software engineering students)
@@ -78,9 +78,9 @@ are taken to mitigate possible attacks.
 
 \subsection*{General authentication principle}
 
-The general principle of authentication is that information about the user’s session is stored in cookies.  
+The general principle of authentication is that information about the user’s session is stored in cookies.
 The payload of these cookies is encrypted on the server.  \cite{Sarkar2020OAuth}
-Cookies can contain the JWT access token and JWT refresh token in most cases, but additional cookies may also be set during the MFA process or OAuth authentication to keep track of the intermediate state of the user.  
+Cookies can contain the JWT access token and JWT refresh token in most cases, but additional cookies may also be set during the MFA process or OAuth authentication to keep track of the intermediate state of the user.
 For example, the user is not considered fully authenticated until they provide the TOTP code from
 their Authenticator app.
 
@@ -104,17 +104,17 @@ Here we describe how authentication with email works. When the user navigates to
   \item Profile picture
 \end{enumerate}
 
-When the user clicks the \textit{Register} button and the input is valid, they receive two things: an email with a confirmation link and a code verification cookie stored in their browser.  
+When the user clicks the \textit{Register} button and the input is valid, they receive two things: an email with a confirmation link and a code verification cookie stored in their browser.
 This ensures that even if the confirmation link is leaked, it has no value without the cookie.
 
-The confirmation link includes a token hash. When the user follows the link, both the token hash and the code verification cookie are sent to the authentication service, where their validity is checked. Once validated, the JWT access and refresh tokens are returned to the user in the form of encrypted cookies.  
+The confirmation link includes a token hash. When the user follows the link, both the token hash and the code verification cookie are sent to the authentication service, where their validity is checked. Once validated, the JWT access and refresh tokens are returned to the user in the form of encrypted cookies.
 At this point, the user is considered authenticated, and their identity can be confirmed on each request.
 
 \subsection*{Setting up Multi-Factor Authentication}
 
 \subsection*{MFA enrollment}
 As an additional layer of security, we provide the option to use MFA \cite{microsoft-mfa}. Each registered user
-can navigate to the \texttt{/settings/mfa-enroll} page to enroll in MFA authentication. They will see a call-to-action button; upon clicking it, a QR code and its equivalent setup key in plain text will be displayed.  
+can navigate to the \texttt{/settings/mfa-enroll} page to enroll in MFA authentication. They will see a call-to-action button; upon clicking it, a QR code and its equivalent setup key in plain text will be displayed.
 The user can scan the QR code with an Authenticator app (e.g., Google Authenticator or Microsoft Authenticator). After adding it, they must enter the newly generated code from the application into the input field below the setup key. If the code is correct, the user is considered enrolled.
 
 \subsection*{MFA verification}
@@ -127,20 +127,20 @@ When the user enters the correct email and password, they receive:
   \item A set of cookies with limited access.
 \end{itemize}
 
-From the code’s perspective, this means: “You entered the correct login and password, but you still need to prove your identity.”  
-The user will receive a new set of cookies as soon as they provide the correct OTP code in the input field.  
+From the code’s perspective, this means: “You entered the correct login and password, but you still need to prove your identity.”
+The user will receive a new set of cookies as soon as they provide the correct OTP code in the input field.
 
 We also take into consideration how much time the user spends on the MFA input screen. After 60 seconds, the MFA challenge itself expires. This means that even if the OTP is still valid, the user must restart the login process, since the issued challenge ID is no longer recognized by the service.
 
 \subsection*{MFA Management}
 
-The user can also manage their MFA factors. By navigating to \texttt{/settings/mfa-manage}, they will see their MFA factor ID.  
-If they choose to delete it, they can press the delete button, after which they will be signed out.  
+The user can also manage their MFA factors. By navigating to \texttt{/settings/mfa-manage}, they will see their MFA factor ID.
+If they choose to delete it, they can press the delete button, after which they will be signed out.
 They can then log in again using only their email and password.
 
 \subsection*{Future work on MFA}
 
-Usually, managing sensitive information such as MFA factors requires reauthentication.  
+Usually, managing sensitive information such as MFA factors requires reauthentication.
 Currently, this is not implemented, but it is on the list of planned improvements.
 
 
@@ -223,6 +223,33 @@ The core entities include:
 \end{itemize}
 
 \section{Security Workflows}
+
+\subsection{Threat Model}
+
+The following table summarizes the key threats identified for the Student Forum application and the corresponding countermeasures implemented:
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|p{3cm}|p{4cm}|p{5cm}|}
+\hline
+\textbf{Threat Type} & \textbf{Description} & \textbf{Countermeasures} \\
+\hline
+Cross-Site Scripting (XSS) & Malicious scripts injected into user-generated content could be executed in other users' browsers, leading to session hijacking, defacement, or theft of sensitive information. & Input sanitization using DOMPurify library, Content Security Policy (CSP) headers, comprehensive unit tests for sanitization functions \\
+\hline
+SQL Injection & Malicious SQL code inserted into search queries or input fields to manipulate database queries and gain unauthorized access to data. & Input sanitization with SQL LIKE wildcard escaping, parameterized queries, comprehensive validation and testing \\
+\hline
+Authentication Vulnerabilities & Weak authentication mechanisms allowing unauthorized access to user accounts or administrative functions. & Multi-Factor Authentication (MFA) with AAL, secure password handling, comprehensive authentication testing \\
+\hline
+Insecure Deserialization & Processing untrusted data through deserialization leading to remote code execution or data tampering. & Strict UUID validation according to RFC 4122, input validation of serialized data structures, specific validation tests \\
+\hline
+Brute Force/Abuse & Lack of rate limiting allowing attackers to perform brute force attacks or resource exhaustion. & Rate limiting mechanisms, request throttling, real-time monitoring of request patterns \\
+\hline
+Dependency Vulnerabilities & Known security vulnerabilities in project dependencies. & Automated monitoring with Dependabot, regular dependency updates, security scanning \\
+\hline
+\end{tabular}
+\caption{Threat Model for Student Forum Application}
+\label{tab:threat-model}
+\end{table}
 
 \subsection{User Login Process}
 
